@@ -78,6 +78,33 @@ class CliFixtures(unittest.TestCase):
                 self.assertEqual(code, 1)
                 self.assertIn("invalid_publication_date", [d["code"] for d in body["diagnostics"]])
 
+    def test_json_syntax_error_identifies_physical_html_line(self):
+        file = self.root / "multiline-opening.html"
+        file.write_text('\n' * 15 + '<script\n type="application/ld+json"\n>\n{ invalid }\n</script>\n')
+        code, body, _ = self.run_cli(file)
+        self.assertEqual(code, 2)
+        error = body['diagnostics'][0]
+        self.assertEqual(error['location'], 'script[1]')
+        self.assertTrue(error['message'].startswith('HTML line 19, JSON column 3:'), error)
+
+    def test_second_json_block_keeps_physical_lines_under_crlf(self):
+        file = self.root / "two-blocks.html"
+        file.write_bytes(b'<script type="application/ld+json">{}</script>\r\n'
+                         b'<p>Other content</p>\r\n<script\r\n type="application/ld+json">\r\n'
+                         b'{\r\n "x":,\r\n}\r\n</script>')
+        code, body, _ = self.run_cli(file)
+        self.assertEqual(code, 2)
+        error = next(d for d in body['diagnostics'] if d['code'] == 'invalid_jsonld')
+        self.assertEqual(error['location'], 'script[2]')
+        self.assertTrue(error['message'].startswith('HTML line 6, JSON column 6:'), error)
+
+    def test_inline_json_syntax_error_does_not_claim_html_column(self):
+        file = self.root / "inline.html"
+        file.write_text('<p>Prefix</p><script type="application/ld+json">{ invalid }</script>')
+        code, body, _ = self.run_cli(file)
+        self.assertEqual(code, 2)
+        self.assertTrue(body['diagnostics'][0]['message'].startswith('HTML line 1, JSON column 3:'))
+
     def test_original_date_only_warning_and_strict_policy(self):
         file = self.html("before.html", "2026-10-05")
         code, body, _ = self.run_cli(file)

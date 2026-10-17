@@ -26,7 +26,9 @@ class JsonLdScripts(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=False)
         self.blocks = []
+        self.block_lines = []
         self.current = None
+        self.current_line = None
 
     def handle_starttag(self, tag, attrs):
         if tag.lower() != "script":
@@ -34,6 +36,7 @@ class JsonLdScripts(HTMLParser):
         mime = next((v for k, v in attrs if k.lower() == "type"), None)
         if isinstance(mime, str) and mime.strip().lower() == "application/ld+json":
             self.current = []
+            self.current_line = self.getpos()[0] + self.get_starttag_text().count("\n")
 
     def handle_data(self, data):
         if self.current is not None:
@@ -42,7 +45,9 @@ class JsonLdScripts(HTMLParser):
     def handle_endtag(self, tag):
         if tag.lower() == "script" and self.current is not None:
             self.blocks.append("".join(self.current))
+            self.block_lines.append(self.current_line)
             self.current = None
+            self.current_line = None
 
     def handle_startendtag(self, tag, attrs):
         self.handle_starttag(tag, attrs)
@@ -196,6 +201,11 @@ class Audit:
                 payload = json.loads(body, object_pairs_hook=unique_json_keys,
                                      parse_constant=reject_nonstandard_json_constant,
                                      parse_float=finite_json_float)
+            except json.JSONDecodeError as exc:
+                html_line = parser.block_lines[number - 1] + exc.lineno - 1
+                self.input_error(path, location, "invalid_jsonld",
+                                 f"HTML line {html_line}, JSON column {exc.colno}: {exc}")
+                continue
             except (ValueError, RecursionError) as exc:
                 self.input_error(path, location, "invalid_jsonld", str(exc))
                 continue
