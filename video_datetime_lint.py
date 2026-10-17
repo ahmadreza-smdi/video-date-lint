@@ -7,6 +7,7 @@ import argparse
 from datetime import datetime, timedelta, timezone
 from html.parser import HTMLParser
 import json
+import math
 from pathlib import Path
 import re
 import sys
@@ -77,6 +78,13 @@ def unique_json_keys(pairs):
 
 def reject_nonstandard_json_constant(value):
     raise ValueError("nonstandard JSON constant: " + value)
+
+
+def finite_json_float(value):
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError("JSON number exceeds the supported finite floating-point range: " + value)
+    return number
 
 
 def parse_timestamp(value):
@@ -186,7 +194,8 @@ class Audit:
             location = "script[" + str(number) + "]"
             try:
                 payload = json.loads(body, object_pairs_hook=unique_json_keys,
-                                     parse_constant=reject_nonstandard_json_constant)
+                                     parse_constant=reject_nonstandard_json_constant,
+                                     parse_float=finite_json_float)
             except (ValueError, RecursionError) as exc:
                 self.input_error(path, location, "invalid_jsonld", str(exc))
                 continue
@@ -345,7 +354,7 @@ def main(argv=None):
         audit.read_sitemap(path)
     report = audit.report()
     if args.format == "json":
-        write_output_line(json.dumps(report, ensure_ascii=True, indent=2, sort_keys=True))
+        write_output_line(json.dumps(report, ensure_ascii=True, allow_nan=False, indent=2, sort_keys=True))
     else:
         counts = report["counts"]
         write_output_line("Scanned {html_files} HTML files, {jsonld_blocks} JSON-LD blocks, {video_objects} VideoObjects, "

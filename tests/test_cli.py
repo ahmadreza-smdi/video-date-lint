@@ -52,9 +52,31 @@ class CliFixtures(unittest.TestCase):
         after = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in self.root.rglob("*") if p.is_file()}
         self.assertEqual(before, after, "CLI must preserve every input and create no files")
         self.assertEqual(result.stderr, "", result.stderr)
-        body = json.loads(result.stdout)
+        def reject_constant(value):
+            raise ValueError("nonstandard JSON in CLI output: " + value)
+        body = json.loads(result.stdout, parse_constant=reject_constant)
         self.assertEqual(body["exit_code"], result.returncode)
         return result.returncode, body, result.stdout
+
+    def test_exponent_overflow_is_an_input_failure_with_standard_json_output(self):
+        file = self.root / "numeric-overflow.html"
+        for token in ["1e400", "-1e400", "9.99e9999"]:
+            for field in [f'"uploadDate":{token}', f'"uploadDate":[{{"nested":{token}}}]',
+                          f'"uploadDate":"2026-10-05T15:17:15Z","extra":{token}']:
+                with self.subTest(token=token, field=field):
+                    file.write_text('<script type="application/ld+json">{'
+                                    '"@type":"VideoObject",' + field + '}</script>', encoding="utf-8")
+                    code, body, _ = self.run_cli(file)
+                    self.assertEqual(code, 2)
+                    self.assertEqual(body["diagnostics"][0]["code"], "invalid_jsonld")
+                    self.assertIn("finite", body["diagnostics"][0]["message"])
+        for token in ["1e308", "-1e308", "0.5", "1e-400"]:
+            with self.subTest(finite=token):
+                file.write_text('<script type="application/ld+json">{'
+                                '"@type":"VideoObject","uploadDate":' + token + '}</script>', encoding="utf-8")
+                code, body, _ = self.run_cli(file)
+                self.assertEqual(code, 1)
+                self.assertIn("invalid_publication_date", [d["code"] for d in body["diagnostics"]])
 
     def test_original_date_only_warning_and_strict_policy(self):
         file = self.html("before.html", "2026-10-05")
