@@ -20,7 +20,7 @@ FILM = "https://example.invalid/film.mp4"
 class CliFixtures(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="fixture-", dir=Path(__file__).parent)
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()
 
     def tearDown(self):
         self.temp.cleanup()
