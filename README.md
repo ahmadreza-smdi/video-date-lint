@@ -71,6 +71,8 @@ Samadi, Ahmadreza (2026). Offline video publication-date linter (v0.1.2) [Comput
 
 If you use a different release, cite that version. If you use the main branch, record the exact commit you used rather than assuming it is identical to v0.1.2.
 
+The [CodeMeta file](codemeta.json) records the software repository, personal author, MIT licence and Python runtime. It describes source metadata; cite the exact release or commit you used.
+
 ## License
 
 For reproducible bug reports and proposed changes, see the [contribution guide](CONTRIBUTING.md).

@@ -1,0 +1,20 @@
+{
+  "@context": "https://w3id.org/codemeta/4.0",
+  "@type": "SoftwareSourceCode",
+  "name": "Offline video publication-date linter",
+  "description": "Offline, dependency-free Python utility for checking publication dates in local HTML JSON-LD and optional video sitemap XML. Developed with AI assistance; diagnostics do not establish real publication times, indexing or rankings.",
+  "codeRepository": "https://github.com/ahmadreza-smdi/video-date-lint",
+  "url": "https://github.com/ahmadreza-smdi/video-date-lint",
+  "author": {
+    "@id": "https://a-samadi.com/#person",
+    "@type": "Person",
+    "name": "Ahmadreza Samadi",
+    "givenName": "Ahmadreza",
+    "familyName": "Samadi",
+    "url": "https://a-samadi.com/about.html"
+  },
+  "license": "https://spdx.org/licenses/MIT",
+  "programmingLanguage": "Python",
+  "runtimePlatform": "Python 3.10 or newer",
+  "readme": "https://github.com/ahmadreza-smdi/video-date-lint/blob/main/README.md"
+}
