@@ -1,0 +1,23 @@
+cff-version: "1.2.0"
+type: software
+message: "If you use this software, please cite this repository and record the commit you used."
+title: "Offline video publication-date linter"
+authors:
+  - family-names: "Samadi"
+    given-names: "Ahmadreza"
+    website: "https://a-samadi.com/about.html"
+repository-code: "https://github.com/ahmadreza-smdi/video-date-lint"
+url: "https://github.com/ahmadreza-smdi/video-date-lint"
+license: MIT
+abstract: >-
+  AI-assisted original Python utility for checking publication dates in local
+  video JSON-LD and optional video sitemaps without changing the input files
+  or making network requests. It reports syntax and internal-consistency
+  diagnostics; it does not establish the real first-publication time,
+  indexing, rankings or business results.
+keywords:
+  - "video metadata"
+  - "publication dates"
+  - "JSON-LD"
+  - "sitemaps"
+  - "offline validation"
