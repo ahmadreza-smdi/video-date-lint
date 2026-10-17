@@ -46,6 +46,18 @@ Google currently recommends timezone information for `uploadDate`; this tool's s
 
 The test fixtures are synthetic and include real warning-value shapes from the completed publication-date repair. They exercise the CLI independently, check exit contracts and represented instants, and hash inputs before/after. They do not use website source as test expected output. The behavioral suite runs in GitHub Actions on Linux and Windows with Python 3.10 and 3.13. Passing these fixtures does not establish indexing or ranking outcomes.
 
+## Cite the version you used
+
+The repository includes [structured citation metadata](CITATION.cff). For the v0.1.2 release, the [frozen citation file](https://github.com/ahmadreza-smdi/video-date-lint/releases/download/v0.1.2/CITATION.cff) accompanies the released code.
+
+A plain-text example for that release:
+
+```text
+Samadi, Ahmadreza (2026). Offline video publication-date linter (v0.1.2) [Computer software]. GitHub. https://github.com/ahmadreza-smdi/video-date-lint/releases/tag/v0.1.2
+```
+
+If you use a different release, cite that version. If you use the main branch, record the exact commit you used rather than assuming it is identical to v0.1.2.
+
 ## License
 
 For reproducible bug reports and proposed changes, see the [contribution guide](CONTRIBUTING.md).
