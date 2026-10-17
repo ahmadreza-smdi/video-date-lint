@@ -19,6 +19,8 @@ Try the [worked examples and expected outcomes](examples/EXAMPLES.txt) before ch
 
 To use the utility in a site's publication workflow, follow [Check video dates before publishing a site](docs/check-your-site.md). It includes a local command and an adaptable GitHub Actions example with a fixed utility revision.
 
+To interpret a sitemap disagreement or a successful exit with a skipped comparison, follow [Read a video-sitemap mismatch and a skipped comparison](docs/read-sitemap-comparisons.md).
+
 The directory scan includes `.html` and `.htm` recursively and excludes `.git`, `node_modules` and `__pycache__`. Explicit file arguments are read as HTML. Inputs are deduplicated by resolved path: parent-directory segments and symlink aliases pointing to the same target do not cause repeated scans. Diagnostic paths use those resolved targets. A sitemap index is unsupported; pass its individual video sitemap files with repeated `--sitemap` arguments.
 
 ## Policies and outcomes
