@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">Two clocks can describe the same instant</title>
+  <desc id="desc">Synthetic video-date examples. 2026-10-09 at 22:00 UTC and 2026-10-10 at 01:30 with offset plus 03:30 represent the same instant. A timestamp of 2026-10-09 at 12:00 without an offset cannot establish an instant; it is a warning by default and an error under this tool's strict policy. This does not establish a real publication time or indexing.</desc>
+  <rect width="960" height="500" fill="#f6faf9"/>
+  <g font-family="Helvetica Neue,Arial,sans-serif" fill="#193d45">
+    <text x="36" y="42" font-size="14" letter-spacing="1.2">AHMADREZA SAMADI · VIDEO DATE LINTER</text>
+    <text x="36" y="92" font-size="32" font-weight="700">Compare the instant. Keep the uncertainty.</text>
+    <text x="36" y="125" font-size="18">Synthetic examples from the existing tool fixtures</text>
+    <rect x="36" y="157" width="432" height="257" rx="20" fill="#dff2eb"/>
+    <rect x="492" y="157" width="432" height="257" rx="20" fill="#e4eff8"/>
+    <text x="60" y="192" font-size="20" font-weight="700">Different local dates, same instant</text>
+    <g font-family="Courier New,monospace" font-size="19">
+      <text x="60" y="237">2026-10-09T22:00:00Z</text>
+      <text x="60" y="274">2026-10-10T01:30:00+03:30</text>
+    </g>
+    <path d="M60 296H444" fill="none" stroke="#7b9e94"/>
+    <text x="60" y="329" font-size="20" font-weight="700">One represented UTC instant</text>
+    <text x="60" y="361" font-size="18">Agreement checks these supplied dates.</text>
+    <text x="60" y="389" font-size="18">It does not prove when a film went live.</text>
+    <text x="516" y="192" font-size="20" font-weight="700">Missing timezone, unknown instant</text>
+    <text x="516" y="237" font-family="Courier New,monospace" font-size="19">2026-10-09T12:00:00</text>
+    <text x="516" y="274" font-size="18">No offset is supplied. None is guessed.</text>
+    <path d="M516 296H900" fill="none" stroke="#829caf"/>
+    <text x="516" y="329" font-size="20" font-weight="700">Default: warning</text>
+    <text x="516" y="361" font-size="20" font-weight="700">Strict policy: error</text>
+    <text x="516" y="389" font-size="18">Read diagnostics as well as the exit code.</text>
+    <text x="36" y="451" font-size="17">Local metadata checks do not establish real publication, indexing or rankings.</text>
+    <text x="36" y="480" font-size="14">AI-assisted educational diagram · MIT · a-samadi.com/about.html</text>
+  </g>
+</svg>

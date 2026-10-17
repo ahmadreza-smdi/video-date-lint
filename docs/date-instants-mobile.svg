@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="732" viewBox="0 0 390 732" role="img" aria-labelledby="title desc">
+  <title id="title">Two clocks can describe the same instant</title>
+  <desc id="desc">Synthetic fixtures show equivalent UTC and plus 03:30 video publication timestamps. A missing timezone leaves the instant unknown; the tool warns by default and errors under strict policy. These checks do not establish real publication or search indexing.</desc>
+  <rect width="390" height="732" fill="#f6faf9"/>
+  <g font-family="Helvetica Neue,Arial,sans-serif" fill="#193d45">
+    <text x="24" y="32" font-size="13" letter-spacing="0.8">AHMADREZA SAMADI</text>
+    <text x="24" y="54" font-size="13">VIDEO DATE LINTER</text>
+    <text x="24" y="96" font-size="28" font-weight="700">Compare the instant.</text>
+    <text x="24" y="130" font-size="28" font-weight="700">Keep the uncertainty.</text>
+    <text x="24" y="162" font-size="16">Synthetic examples from existing fixtures</text>
+    <rect x="20" y="184" width="350" height="220" rx="18" fill="#dff2eb"/>
+    <text x="36" y="214" font-size="18" font-weight="700">Different dates, same instant</text>
+    <g font-family="Courier New,monospace" font-size="17">
+      <text x="36" y="250">2026-10-09T22:00:00Z</text>
+      <text x="36" y="281">2026-10-10T01:30:00+03:30</text>
+    </g>
+    <path d="M36 300H354" fill="none" stroke="#7b9e94"/>
+    <text x="36" y="330" font-size="18" font-weight="700">One represented UTC instant</text>
+    <text x="36" y="359" font-size="16">Agreement checks supplied dates,</text>
+    <text x="36" y="383" font-size="16">not when a film actually went live.</text>
+    <rect x="20" y="422" width="350" height="216" rx="18" fill="#e4eff8"/>
+    <text x="36" y="452" font-size="18" font-weight="700">Missing timezone, unknown instant</text>
+    <text x="36" y="489" font-family="Courier New,monospace" font-size="17">2026-10-09T12:00:00</text>
+    <text x="36" y="518" font-size="16">No offset supplied. None is guessed.</text>
+    <path d="M36 535H354" fill="none" stroke="#829caf"/>
+    <text x="36" y="565" font-size="18" font-weight="700">Default: warning · Strict: error</text>
+    <text x="36" y="594" font-size="16">Read diagnostics as well as</text>
+    <text x="36" y="618" font-size="16">the exit code.</text>
+    <text x="24" y="667" font-size="15">No proof of real publication, indexing</text>
+    <text x="24" y="690" font-size="15">or rankings. AI-assisted · MIT</text>
+    <text x="24" y="718" font-size="13">a-samadi.com/about.html</text>
+  </g>
+</svg>

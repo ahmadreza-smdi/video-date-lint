@@ -23,6 +23,13 @@ The directory scan includes `.html` and `.htm` recursively and excludes `.git`, 
 
 ## Policies and outcomes
 
+<picture>
+  <source media="(max-width: 650px)" srcset="docs/date-instants-mobile.svg">
+  <img src="docs/date-instants.svg" alt="Synthetic date examples: 2026-10-09T22:00:00Z and 2026-10-10T01:30:00+03:30 represent the same UTC instant. A timestamp without a timezone cannot establish an instant; the tool warns by default and errors under its strict policy. Agreement does not prove a real publication time or indexing.">
+</picture>
+
+The [equivalent-instant and missing-timezone fixtures](examples/EXAMPLES.txt) supply these teaching timestamps. The strict rule is this utility's chosen policy. This AI-assisted diagram adds a reading aid; the CLI, examples and release archives are unchanged.
+
 The supported date profile is `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS[.ffffff][Z|±HH:MM]`, with ASCII digits and one to six fractional digits. Calendar dates, clock fields and numeric offset components are checked. Leap seconds, alternate ISO spellings, remote JSON-LD contexts, microdata and RDFa are outside this tool. Missing offsets never inherit the machine timezone or a guessed historical time.
 
 Default behavior:
