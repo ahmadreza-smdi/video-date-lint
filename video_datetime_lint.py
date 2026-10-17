@@ -322,17 +322,26 @@ def main(argv=None):
             try:
                 for file in path.rglob("*"):
                     if file.is_file() and file.suffix.lower() in {".html", ".htm"} and not any(p in IGNORED_DIRS for p in file.relative_to(path).parts):
-                        html_paths.add(file)
-            except OSError as exc:
+                        html_paths.add(file.resolve())
+            except (OSError, RuntimeError) as exc:
                 audit.input_error(path, "", "unreadable_directory", str(exc))
         elif path.is_file():
-            html_paths.add(path)
+            try:
+                html_paths.add(path.resolve())
+            except (OSError, RuntimeError) as exc:
+                audit.input_error(path, "", "unreadable_html", str(exc))
         else:
             audit.input_error(path, "", "missing_input", "HTML path does not exist or is not a regular file/directory")
     for path in sorted(html_paths):
         audit.read_html(path)
     audit.compare_repeated_videos()
-    for path in sorted({Path(name).absolute() for name in args.sitemap}):
+    sitemap_paths = set()
+    for name in args.sitemap:
+        try:
+            sitemap_paths.add(Path(name).resolve())
+        except (OSError, RuntimeError) as exc:
+            audit.input_error(name, "", "invalid_sitemap", str(exc))
+    for path in sorted(sitemap_paths):
         audit.read_sitemap(path)
     report = audit.report()
     if args.format == "json":

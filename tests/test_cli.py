@@ -255,6 +255,48 @@ class CliFixtures(unittest.TestCase):
                     self.assertIn("Caf\\xe9", result.stdout)
                 self.assertEqual(hashlib.sha256(file.read_bytes()).hexdigest(), before)
 
+    def test_parent_segment_aliases_deduplicate_html_and_sitemaps(self):
+        file = self.html("video.html", "2026-10-05T15:17:15Z")
+        xml = self.sitemap("2026-10-05T15:17:15Z")
+        sub = self.root / "sub"
+        sub.mkdir()
+        code, body, _ = self.run_cli(file, sub / ".." / file.name,
+                                     "--sitemap", xml, "--sitemap", sub / ".." / xml.name)
+        self.assertEqual(code, 0)
+        self.assertEqual(body["counts"]["html_files"], 1)
+        self.assertEqual(body["counts"]["video_objects"], 1)
+        self.assertEqual(body["counts"]["sitemap_files"], 1)
+        self.assertEqual(body["counts"]["sitemap_comparisons"], 1)
+        self.assertEqual(body["counts"]["repeated_video_comparisons"], 0)
+
+    def test_symlink_aliases_deduplicate_without_merging_distinct_files(self):
+        file = self.html("video.html", "2026-10-05T15:17:15Z")
+        alias = self.root / "alias.html"
+        try:
+            alias.symlink_to(file)
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest("Symlink creation unavailable: " + str(exc))
+        code, body, _ = self.run_cli(file, alias)
+        self.assertEqual(code, 0)
+        self.assertEqual(body["counts"]["html_files"], 1)
+        distinct = self.html("distinct.html", "2026-10-05T15:17:16Z")
+        code, body, _ = self.run_cli(file, alias, distinct)
+        self.assertEqual(code, 1)
+        self.assertEqual(body["counts"]["html_files"], 2)
+        self.assertEqual(body["counts"]["repeated_video_comparisons"], 1)
+        self.assertEqual(body["diagnostics"][0]["code"], "repeated_video_mismatch")
+
+    def test_sitemap_symlink_loop_is_input_error_not_traceback(self):
+        loop = self.root / "loop.xml"
+        try:
+            loop.symlink_to(loop.name)
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest("Symlink creation unavailable: " + str(exc))
+        code, body, _ = self.run_cli("--sitemap", loop)
+        self.assertEqual(code, 2)
+        self.assertEqual(body["diagnostics"][0]["code"], "invalid_sitemap")
+        self.assertEqual(body["counts"]["errors"], 1)
+
     def test_directory_dedup_stable_json_and_text_output(self):
         a = self.html("a.html", "2026-10-05T15:17:15Z")
         self.html("b.html", "2026-10-05T15:17:15Z")

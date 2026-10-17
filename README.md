@@ -15,7 +15,7 @@ python3 video_datetime_lint.py path/to/site --sitemap sitemap.xml --strict-datet
 python3 -B -m unittest discover -s tests -v
 ```
 
-The directory scan includes `.html` and `.htm` recursively and excludes `.git`, `node_modules` and `__pycache__`. Explicit file arguments are read as HTML. Inputs are deduplicated by absolute path. A sitemap index is unsupported; pass its individual video sitemap files with repeated `--sitemap` arguments.
+The directory scan includes `.html` and `.htm` recursively and excludes `.git`, `node_modules` and `__pycache__`. Explicit file arguments are read as HTML. Inputs are deduplicated by resolved path: parent-directory segments and symlink aliases pointing to the same target do not cause repeated scans. Diagnostic paths use those resolved targets. A sitemap index is unsupported; pass its individual video sitemap files with repeated `--sitemap` arguments.
 
 ## Policies and outcomes
 
@@ -36,7 +36,7 @@ Exit codes are `0` for no errors (warnings may remain), `1` for lint/policy erro
 
 ## What this does not prove
 
-Syntax and internal consistency cannot prove a timestamp is the real first publication, that a video will be indexed, or that rich results or rankings will improve. A page can pass this narrow tool while failing other structured-data, video, accessibility or indexing requirements. Partially supplied files limit consistency checks. Symlink aliases are not resolved into one identity; the same file supplied through different aliases may be counted twice. Only the supported timestamp subset is assessed.
+Syntax and internal consistency cannot prove a timestamp is the real first publication, that a video will be indexed, or that rich results or rankings will improve. A page can pass this narrow tool while failing other structured-data, video, accessibility or indexing requirements. Partially supplied files limit consistency checks. Hard links with different resolved paths remain separate inputs; file contents are not used to guess identity. Only the supported timestamp subset is assessed.
 
 Google currently recommends timezone information for `uploadDate`; this tool's strict timezone rule is an explicit policy. Google lists video sitemap `publication_date` as optional and accepts date alone. Current source checks: [Video structured data](https://developers.google.com/search/docs/appearance/structured-data/video), [video sitemap tags](https://developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps), reviewed 10 October 2026.
 
