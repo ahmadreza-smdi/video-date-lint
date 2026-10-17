@@ -2,14 +2,14 @@ cff-version: "1.2.0"
 type: software
 message: "If you use this software, please cite this repository and record the commit you used."
 title: "Offline video publication-date linter"
-version: "0.1.0"
+version: "0.1.1"
 date-released: "2026-10-17"
 authors:
   - family-names: "Samadi"
     given-names: "Ahmadreza"
     website: "https://a-samadi.com/about.html"
 repository-code: "https://github.com/ahmadreza-smdi/video-date-lint"
-url: "https://github.com/ahmadreza-smdi/video-date-lint/releases/tag/v0.1.0"
+url: "https://github.com/ahmadreza-smdi/video-date-lint/releases/tag/v0.1.1"
 license: MIT
 abstract: >-
   AI-assisted original Python utility for checking publication dates in local
