@@ -1,0 +1,29 @@
+# Copy into your site's .github/workflows/ after adapting the output path.
+# Assumes committed, finished HTML under public/; generated sites need a build step.
+name: Check video publication dates
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  video-dates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Check out a fixed linter revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: ahmadreza-smdi/video-date-lint
+          ref: 61ec70130099fa0da37637efe74e24f02718873e
+          path: .video-date-lint
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.13'
+      - name: Check the finished HTML
+        run: python .video-date-lint/video_datetime_lint.py public --strict-datetime --require-video --format json
