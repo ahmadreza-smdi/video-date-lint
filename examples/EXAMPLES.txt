@@ -1,0 +1,93 @@
+Video publication dates: five synthetic situations, seven CLI runs
+================================================================
+
+These small files are teaching fixtures, not metadata for a real published film.
+All example.invalid URLs are inert identifiers. The CLI never fetches them.
+Developed with AI assistance for Ahmadreza Samadi's public utility.
+The repository's MIT licence covers these original examples and verifier.
+
+Run commands below from the repository root with Python 3.10 or newer.
+On Windows use python in place of python3 if needed. No packages are required.
+
+Verify every documented case in one command:
+
+    python3 -B examples/verify_examples.py
+
+The verifier succeeds only when all seven CLI outcomes match the declared
+exit codes, diagnostic codes/severities and relevant scan counts, and the
+input HTML/XML bytes remain unchanged. Its own successful exit is 0 even
+though some demonstrated CLI invocations intentionally return 1 or 2.
+
+1. Two local dates, one instant
+-------------------------------
+2026-10-09T22:00:00Z and 2026-10-10T01:30:00+03:30 represent the same instant.
+Both HTML files identify the exact same synthetic video URL. The sitemap
+uses the UTC spelling. A different local calendar day is not a mismatch.
+
+    python3 video_datetime_lint.py examples/equivalent --sitemap examples/equivalent/sitemap.xml --strict-datetime --require-sitemap-dates --require-video --now 2026-10-10T12:00:00Z --format json
+
+Expected: exit 0; 2 VideoObjects; 1 repeated-video comparison; 1 sitemap
+comparison; no diagnostics. This proves agreement of supplied instants,
+not that a film was actually published at that time. The sitemap fixture
+contains only fields relevant to this narrow checker, not every field a
+complete video sitemap may require.
+
+2. An impossible date
+---------------------
+February 30 is not a valid calendar date.
+
+    python3 video_datetime_lint.py examples/impossible.html --now 2026-10-10T12:00:00Z --format json
+
+Expected: exit 1; invalid_publication_date error. The tool reports the error;
+it does not guess a replacement or repair the source file.
+
+3. A clock time without a timezone
+----------------------------------
+The tool never assumes the machine's timezone for 2026-10-09T12:00:00.
+
+    python3 video_datetime_lint.py examples/missing-zone.html --now 2026-10-10T12:00:00Z --format json
+    python3 video_datetime_lint.py examples/missing-zone.html --strict-datetime --now 2026-10-10T12:00:00Z --format json
+
+Expected: default exit 0 with missing_timezone WARNING; strict exit 1 with
+missing_timezone ERROR. Exit 0 alone is not a claim that every check ran
+or that the report has no warnings. Strict mode is a chosen project policy.
+
+4. A page containing no video
+-----------------------------
+Scanning a page with no VideoObject cannot validate video publication dates.
+
+    python3 video_datetime_lint.py examples/no-video.html --now 2026-10-10T12:00:00Z --format json
+    python3 video_datetime_lint.py examples/no-video.html --require-video --now 2026-10-10T12:00:00Z --format json
+
+Expected: default exit 0 and video_objects 0; required-video exit 1 with
+no_video_objects ERROR. Check the scan counts as well as the exit code.
+
+5. Malformed JSON-LD
+--------------------
+A trailing comma prevents JSON parsing; this is different from a parsed
+date that fails the selected publication policy.
+
+    python3 video_datetime_lint.py examples/malformed.html --now 2026-10-10T12:00:00Z --format json
+
+Expected: exit 2 with invalid_jsonld ERROR. Input failures must not silently
+turn into an apparently successful scan with no videos.
+
+Keep the clock explicit
+-----------------------
+The fixed --now value makes these demonstrations repeatable. On a real
+publication scan, omit --now to use the current UTC instant or supply the
+clock you intentionally want to assess. Do not copy this teaching clock
+into a live publishing gate. It is not the publication time of a real film.
+
+Use individual case paths. Scanning all of examples/ combines intentional
+failures and reused synthetic video identifiers, so it is not a clean-site
+demonstration. The HTML fixtures contain only minimal parser inputs;
+they are not accessible watch-page or complete structured-data templates.
+
+Interpretation boundary
+-----------------------
+A pass is evidence only about the supplied local metadata and chosen policy.
+It does not verify a real first-publication time, video delivery, complete
+schema requirements, indexing, rankings, audience growth or business results.
+Start with the decision: decide what a check can establish before acting
+on its success signal. Maintainer: https://a-samadi.com/about.html

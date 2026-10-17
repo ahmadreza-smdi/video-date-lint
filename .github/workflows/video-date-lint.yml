@@ -6,6 +6,7 @@ on:
     paths:
       - 'video_datetime_lint.py'
       - 'tests/**'
+      - 'examples/**'
       - 'README.md'
       - 'LICENSE'
       - '.github/workflows/video-date-lint.yml'
@@ -13,6 +14,7 @@ on:
     paths:
       - 'video_datetime_lint.py'
       - 'tests/**'
+      - 'examples/**'
       - 'README.md'
       - 'LICENSE'
       - '.github/workflows/video-date-lint.yml'
@@ -41,3 +43,5 @@ jobs:
       - name: Run synthetic behavioral fixtures
         working-directory: .
         run: python -B -m unittest discover -s tests -v
+      - name: Verify documented synthetic examples
+        run: python -B examples/verify_examples.py
