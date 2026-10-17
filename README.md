@@ -48,6 +48,8 @@ The test fixtures are synthetic and include real warning-value shapes from the c
 
 ## License
 
+For reproducible bug reports and proposed changes, see the [contribution guide](CONTRIBUTING.md).
+
 [MIT](LICENSE), Copyright (c) 2026 Ahmadreza Samadi. The license applies to this standalone utility and its documentation/tests. It does not relicense the source website, photographs, films, fonts or other resources.
 
 ## Origin and maintainer
