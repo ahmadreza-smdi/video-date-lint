@@ -84,3 +84,11 @@ For reproducible bug reports and proposed changes, see the [contribution guide](
 ## Origin and maintainer
 
 Originally published in [the personal website repository](https://github.com/ahmadreza-smdi/ahmadreza-smdi.github.io/tree/main/tools/video-date-lint). This standalone distribution preserves that implementation and its behavioral fixtures. Maintainer: [Ahmadreza Samadi](https://a-samadi.com/about.html).
+
+## More public tools by [Ahmadreza Samadi](https://a-samadi.com/about.html)
+
+- **Record AI workflow costs:** [ai-workflow-cost](https://github.com/ahmadreza-smdi/ai-workflow-cost) totals caller-recorded attempt costs and accepted-result labels. It does not independently check output quality or calculate ROI.
+
+- **Read fixed metro rent-burden data:** [metro-rent-burden](https://github.com/ahmadreza-smdi/metro-rent-burden) looks up stored ACS 2024 rows. It does not provide current asking rents or an investment ranking.
+
+Read each project's input rules and limits before use. Running one tool does not verify another tool's inputs or results.
