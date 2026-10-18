@@ -11,6 +11,7 @@ import math
 import os
 from pathlib import Path
 import re
+import stat
 import sys
 import xml.etree.ElementTree as ET
 
@@ -354,8 +355,15 @@ def main(argv=None):
                     directories[:] = [name for name in directories if name not in IGNORED_DIRS]
                     for name in filenames:
                         file = Path(folder) / name
-                        if file.suffix.lower() in {".html", ".htm"} and file.is_file():
-                            html_paths.add(file.resolve())
+                        if file.suffix.lower() not in {".html", ".htm"}:
+                            continue
+                        try:
+                            # Explicit stat keeps metadata failures visible even
+                            # on Python versions whose is_file suppresses them.
+                            if stat.S_ISREG(file.stat().st_mode):
+                                html_paths.add(file.resolve())
+                        except (OSError, RuntimeError) as exc:
+                            audit.input_error(file, "", "unreadable_html", str(exc))
             except (OSError, RuntimeError) as exc:
                 audit.input_error(path, "", "unreadable_directory", str(exc))
         elif is_regular_file:

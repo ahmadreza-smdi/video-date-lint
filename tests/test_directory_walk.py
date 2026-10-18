@@ -77,5 +77,57 @@ class DirectoryWalk(unittest.TestCase):
         self.assertEqual(errors[0]["path"], str(denied))
         self.assertIn("synthetic directory access denial", errors[0]["message"])
 
+    def test_one_html_stat_failure_does_not_discard_later_sibling(self):
+        bad = self.root / "denied.html"
+        bad.write_text("<html></html>")
+        original_stat = Path.stat
+        before = {p.name: p.read_bytes() for p in (bad, self.good)}
+
+        def stat(path, *args, **kwargs):
+            if path == bad:
+                raise PermissionError(errno.EACCES, "synthetic HTML metadata denial", str(path))
+            return original_stat(path, *args, **kwargs)
+
+        output = io.StringIO()
+        # A fixed discovery order proves that readable files after the bad one
+        # are retained; no filesystem enumeration-order assumption is involved.
+        with mock.patch.object(self.module.os, "walk", return_value=[
+                (str(self.root), [], [bad.name, self.good.name])]):
+            with mock.patch.object(Path, "stat", stat), contextlib.redirect_stdout(output):
+                code = self.module.main([str(self.root), "--now", "2026-10-18T00:00:00Z", "--format", "json"])
+        report = json.loads(output.getvalue())
+        self.assertEqual((code, report["exit_code"]), (2, 2))
+        self.assertEqual(report["counts"]["html_files"], 1)
+        self.assertEqual(report["counts"]["video_objects"], 1)
+        errors = [d for d in report["diagnostics"] if d["severity"] == "error"]
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["code"], "unreadable_html")
+        self.assertEqual(errors[0]["path"], str(bad))
+        self.assertIn("synthetic HTML metadata denial", errors[0]["message"])
+        self.assertEqual(before, {p.name: p.read_bytes() for p in (bad, self.good)})
+
+    def test_one_html_resolve_failure_does_not_discard_later_sibling(self):
+        bad = self.root / "unresolvable.html"
+        bad.write_text("<html></html>")
+        original_resolve = Path.resolve
+
+        def resolve(path, *args, **kwargs):
+            if path == bad:
+                raise RuntimeError("synthetic HTML symlink resolution failure")
+            return original_resolve(path, *args, **kwargs)
+
+        output = io.StringIO()
+        with mock.patch.object(self.module.os, "walk", return_value=[
+                (str(self.root), [], [bad.name, self.good.name])]):
+            with mock.patch.object(Path, "resolve", resolve), contextlib.redirect_stdout(output):
+                code = self.module.main([str(self.root), "--now", "2026-10-18T00:00:00Z", "--format", "json"])
+        report = json.loads(output.getvalue())
+        self.assertEqual((code, report["exit_code"]), (2, 2))
+        self.assertEqual(report["counts"]["html_files"], 1)
+        errors = [d for d in report["diagnostics"] if d["severity"] == "error"]
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]["code"], "unreadable_html")
+        self.assertEqual(errors[0]["path"], str(bad))
+
 if __name__ == "__main__":
     unittest.main()
