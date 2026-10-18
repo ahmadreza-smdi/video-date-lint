@@ -336,15 +336,21 @@ def main(argv=None):
     audit = Audit(now, args.strict_datetime, args.require_sitemap_dates, args.require_video)
     html_paths = set()
     for name in args.paths:
-        path = Path(name).absolute()
-        if path.is_dir():
+        try:
+            path = Path(name).absolute()
+            is_directory = path.is_dir()
+            is_regular_file = not is_directory and path.is_file()
+        except (OSError, RuntimeError) as exc:
+            audit.input_error(name, "", "unreadable_input", str(exc))
+            continue
+        if is_directory:
             try:
                 for file in path.rglob("*"):
                     if file.is_file() and file.suffix.lower() in {".html", ".htm"} and not any(p in IGNORED_DIRS for p in file.relative_to(path).parts):
                         html_paths.add(file.resolve())
             except (OSError, RuntimeError) as exc:
                 audit.input_error(path, "", "unreadable_directory", str(exc))
-        elif path.is_file():
+        elif is_regular_file:
             try:
                 html_paths.add(path.resolve())
             except (OSError, RuntimeError) as exc:
