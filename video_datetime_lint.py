@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 from html.parser import HTMLParser
 import json
 import math
+import os
 from pathlib import Path
 import re
 import sys
@@ -345,9 +346,16 @@ def main(argv=None):
             continue
         if is_directory:
             try:
-                for file in path.rglob("*"):
-                    if file.is_file() and file.suffix.lower() in {".html", ".htm"} and not any(p in IGNORED_DIRS for p in file.relative_to(path).parts):
-                        html_paths.add(file.resolve())
+                def walk_error(exc):
+                    audit.input_error(exc.filename or path, "", "unreadable_directory", str(exc))
+
+                for folder, directories, filenames in os.walk(path, onerror=walk_error, followlinks=False):
+                    # Prune before descent: ignored trees must not be inspected.
+                    directories[:] = [name for name in directories if name not in IGNORED_DIRS]
+                    for name in filenames:
+                        file = Path(folder) / name
+                        if file.suffix.lower() in {".html", ".htm"} and file.is_file():
+                            html_paths.add(file.resolve())
             except (OSError, RuntimeError) as exc:
                 audit.input_error(path, "", "unreadable_directory", str(exc))
         elif is_regular_file:
