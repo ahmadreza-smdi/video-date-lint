@@ -53,6 +53,22 @@ JSON decimal/exponent numbers that overflow Python's finite floating-point range
 
 Exit codes are `0` for no errors (warnings may remain), `1` for lint/policy errors, and `2` for input/parse/usage failure. JSON reports have sorted keys and stable diagnostic order with a fixed `--now` clock; text reports include scan counts and diagnostic codes. JSON output uses ASCII escapes so decoded strings, including invalid-date lone surrogates, remain representable in the report. Text output backslash-escapes characters that the active output encoding cannot represent, including diagnostic paths and duplicate-key messages. Unknown XML declared encodings produce input-failure diagnostics. Argument-parser usage errors go to stderr rather than emitting a JSON scan report. Injected clocks must be representable in UTC within Python's datetime range; overflowing boundary offsets are rejected as usage errors. No output-file option or automatic repair is provided.
 
+## When an input fails
+
+In a JSON scan report, exit `2` means an input or parse failure prevented a complete scan under the chosen inputs. It can coexist with ordinary date-policy errors. Inspect every diagnostic, rather than treating the exit code as a list of all problems.
+
+For a reproducible fictional example, with `missing-page-for-demo.html` absent, run from this repository root:
+
+```sh
+python3 video_datetime_lint.py missing-page-for-demo.html examples/impossible.html examples/equivalent/utc.html --now 2026-10-10T12:00:00Z --format json
+```
+
+Expected: exit `2`, `html_files: 2`, `video_objects: 2` and `errors: 2`. One diagnostic is `missing_input`; the other is `invalid_publication_date` from the intentionally impossible February date. The readable valid fixture is still inspected. Counts describe what was inspected, not proof that every intended file was available. This fixed clock makes the exercise repeatable; omit it when checking current publication output.
+
+In the source containing the per-file discovery fix, `unreadable_html` identifies an HTML read, metadata or path-resolution failure; `unreadable_directory` identifies a directory traversal failure. Other readable files can still contribute findings to the same report. Older tagged archives may predate that fix; record the exact source commit used.
+
+Restore access or correct the intended input path, and address any reported date findings in their source or generator before running the same intended scan again. Do not remove an intended file or invent a publication time merely to obtain exit `0`. A corrected input path alone does not repair a separate date error. For JSON syntax failures, use the [broken and repaired JSON example](docs/fix-json-syntax.md).
+
 ## What this does not prove
 
 Syntax and internal consistency cannot prove a timestamp is the real first publication, that a video will be indexed, or that rich results or rankings will improve. A page can pass this narrow tool while failing other structured-data, video, accessibility or indexing requirements. Partially supplied files limit consistency checks. Hard links with different resolved paths remain separate inputs; file contents are not used to guess identity. Only the supported timestamp subset is assessed.
@@ -84,3 +100,11 @@ For reproducible bug reports and proposed changes, see the [contribution guide](
 ## Origin and maintainer
 
 Originally published in [the personal website repository](https://github.com/ahmadreza-smdi/ahmadreza-smdi.github.io/tree/main/tools/video-date-lint). This standalone distribution preserves that implementation and its behavioral fixtures. Maintainer: [Ahmadreza Samadi](https://a-samadi.com/about.html).
+
+## More public tools by [Ahmadreza Samadi](https://a-samadi.com/about.html)
+
+- **Record AI workflow costs:** [ai-workflow-cost](https://github.com/ahmadreza-smdi/ai-workflow-cost) totals caller-recorded attempt costs and accepted-result labels. It does not independently check output quality or calculate ROI.
+
+- **Read fixed metro rent-burden data:** [metro-rent-burden](https://github.com/ahmadreza-smdi/metro-rent-burden) looks up stored ACS 2024 rows. It does not provide current asking rents or an investment ranking.
+
+Read each project's input rules and limits before use. Running one tool does not verify another tool's inputs or results.
