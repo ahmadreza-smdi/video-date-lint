@@ -1,5 +1,7 @@
 # Offline video publication-date linter
 
+For publishers and developers checking whether local video publication dates agree before release.
+
 This original standard-library Python CLI checks publication dates in local HTML JSON-LD and optional video sitemap XML. It catches impossible dates, absent timezones, future publication instants, and inconsistent instants for repeated exact video URLs. It reads inputs without changing them and makes no network requests.
 
 Developed with AI assistance for Ahmadreza Samadi’s personal website repository and reviewed with synthetic behavioral fixtures. This utility is original code; it does not import website implementation or third-party packages.
